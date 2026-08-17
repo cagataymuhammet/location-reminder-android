@@ -1,11 +1,13 @@
 package com.sap.codelab.ui.create
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.sap.codelab.data.model.Memo
-import com.sap.codelab.data.repository.IMemoRepository
-import com.sap.codelab.utils.coroutines.ScopeProvider
+import com.sap.codelab.domain.SaveMemoUseCase
 import com.sap.codelab.utils.extensions.empty
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -13,16 +15,21 @@ import javax.inject.Inject
  * ViewModel for matching CreateMemo view. Handles user interactions.
  */
 @HiltViewModel
-internal class CreateMemoViewModel @Inject constructor(private val memoRepository: IMemoRepository) : ViewModel() {
+internal class CreateMemoViewModel @Inject constructor(private val saveMemoUseCase: SaveMemoUseCase) :
+    ViewModel() {
 
     private var memo = Memo(0, String.empty(), String.empty(), 0, 0, 0, false)
+
+    private val _memoSaved = MutableSharedFlow<Unit>()
+    val memoSaved: SharedFlow<Unit> = _memoSaved
 
     /**
      * Saves the memo in it's current state.
      */
     fun saveMemo() {
-        ScopeProvider.application.launch {
-            memoRepository.saveMemo(memo)
+        viewModelScope.launch {
+            saveMemoUseCase(memo)
+            _memoSaved.emit(Unit)
         }
     }
 
@@ -30,7 +37,7 @@ internal class CreateMemoViewModel @Inject constructor(private val memoRepositor
      * Call this method to update the memo. This is usually needed when the user changed his input.
      */
     fun updateMemo(title: String, description: String) {
-        memo = Memo(title = title, description = description, id = 0, reminderDate = 0, reminderLatitude = 0, reminderLongitude = 0, isDone = false)
+        memo = memo.copy(title = title, description = description)
     }
 
     /**

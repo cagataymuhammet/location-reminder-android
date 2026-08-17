@@ -6,12 +6,15 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.annotation.StringRes
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.sap.codelab.R
 import com.sap.codelab.databinding.ActivityCreateMemoBinding
 import com.sap.codelab.ui.BaseBindingActivity
 import com.sap.codelab.utils.extensions.empty
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.getValue
+import kotlinx.coroutines.launch
 
 /**
  * Activity that allows a user to create a new Memo.
@@ -29,40 +32,43 @@ internal class CreateMemoActivity : BaseBindingActivity<ActivityCreateMemoBindin
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        observeMemoSaved()
      }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_create_memo, menu)
-        return true
-    }
 
-    /**
-     * Handles actionbar interactions.
-     */
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_save -> {
-                saveMemo()
-                true
+    private fun observeMemoSaved() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                createMemoViewModel.memoSaved.collect {
+                    setResult(RESULT_OK)
+                    finish()
+                }
             }
-
-            else             -> super.onOptionsItemSelected(item)
         }
     }
+
 
     /**
      * Saves the memo if the input is valid; otherwise shows the corresponding error messages.
      */
     private fun saveMemo() {
         binding.contentCreateMemo.run {
-            createMemoViewModel.updateMemo(memoTitle.text.toString(), memoDescription.text.toString())
+            createMemoViewModel.updateMemo(
+                title = memoTitle.text.toString(),
+                description = memoDescription.text.toString()
+            )
+
             if (createMemoViewModel.isMemoValid()) {
                 createMemoViewModel.saveMemo()
-                setResult(RESULT_OK)
-                finish()
             } else {
-                memoTitleContainer.error = getErrorMessage(createMemoViewModel.hasTitleError(), R.string.memo_title_empty_error)
-                memoDescription.error = getErrorMessage(createMemoViewModel.hasTextError(), R.string.memo_text_empty_error)
+                memoTitleContainer.error = getErrorMessage(
+                    createMemoViewModel.hasTitleError(),
+                    R.string.memo_title_empty_error
+                )
+                memoDescription.error = getErrorMessage(
+                    createMemoViewModel.hasTextError(),
+                    R.string.memo_text_empty_error
+                )
             }
         }
     }
@@ -79,6 +85,25 @@ internal class CreateMemoActivity : BaseBindingActivity<ActivityCreateMemoBindin
             getString(errorMessageResId)
         } else {
             String.empty()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_create_memo, menu)
+        return true
+    }
+
+    /**
+     * Handles actionbar interactions.
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_save -> {
+                saveMemo()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }
