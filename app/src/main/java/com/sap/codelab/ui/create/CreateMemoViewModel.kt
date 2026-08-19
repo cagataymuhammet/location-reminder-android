@@ -18,9 +18,19 @@ import javax.inject.Inject
 internal class CreateMemoViewModel @Inject constructor(private val saveMemoUseCase: SaveMemoUseCase) :
     ViewModel() {
 
-    private var memo = Memo(0, String.empty(), String.empty(), 0, 0, 0, false)
+    /*
+     * The current memo.
+     */
+    private var memo = Memo(0, String.empty(), String.empty(), 0, 0.0, 0.0, false)
 
+    /*
+     * Emits an event when the memo is saved.
+     */
     private val _memoSaved = MutableSharedFlow<Unit>()
+
+    /*
+     * Exposes the memoSaved flow.
+     */
     val memoSaved: SharedFlow<Unit> = _memoSaved
 
     /**
@@ -36,8 +46,13 @@ internal class CreateMemoViewModel @Inject constructor(private val saveMemoUseCa
     /**
      * Call this method to update the memo. This is usually needed when the user changed his input.
      */
-    fun updateMemo(title: String, description: String) {
-        memo = memo.copy(title = title, description = description)
+    fun updateMemo(title: String, description: String, latitude: Double, longitude: Double) {
+        memo = memo.copy(
+            title = title,
+            description = description,
+            reminderLatitude = latitude,
+            reminderLongitude = longitude
+        )
     }
 
     /**

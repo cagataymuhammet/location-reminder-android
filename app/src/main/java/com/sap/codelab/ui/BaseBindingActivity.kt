@@ -31,9 +31,7 @@ internal abstract class BaseBindingActivity<VB : ViewBinding> : AppCompatActivit
     /**
      * Inflates the view binding for the activity.
      */
-    protected abstract fun inflateBinding(
-        inflater: LayoutInflater
-    ): VB
+    protected abstract fun inflateBinding(inflater: LayoutInflater): VB
 
 
     /*
@@ -49,32 +47,38 @@ internal abstract class BaseBindingActivity<VB : ViewBinding> : AppCompatActivit
 
         binding = inflateBinding(layoutInflater)
         setContentView(binding.root)
-        setupSystemBars()
+        setupSystemBarsInset()
+        setupNavigationBarInset()
     }
 
 
     /*
      * Sets up edge-to-edge display.
      */
-    private fun setupSystemBars() {
+    private fun setupSystemBarsInset() {
         val appBar = findViewById<View>(R.id.appBar) ?: return
 
         ViewCompat.setOnApplyWindowInsetsListener(appBar) { view, insets ->
-            val statusBarInsets = insets.getInsets(
-                WindowInsetsCompat.Type.statusBars()
-            )
-
-            view.updatePadding(
-                top = statusBarInsets.top
-            )
-
+            val statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            view.updatePadding(top = statusBarInsets.top)
             insets
         }
 
-        WindowCompat.getInsetsController(
-            window,
-            window.decorView
-        ).isAppearanceLightStatusBars = false
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
+            false
+    }
+
+    /*
+    * Sets up navigation bar inset for the activity.
+     */
+    private fun setupNavigationBarInset() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { target, insets ->
+
+            val bottomInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            target.updatePadding(bottom = bottomInset)
+
+            insets
+        }
     }
 
 }

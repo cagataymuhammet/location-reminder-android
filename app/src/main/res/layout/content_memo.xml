@@ -13,7 +13,12 @@
         android:id="@+id/memo_title_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_activity"
+        android:layout_marginTop="@dimen/padding_activity"
+        android:layout_marginEnd="@dimen/padding_activity"
         app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -28,7 +33,11 @@
         android:id="@+id/memo_description_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_activity"
+        android:layout_marginEnd="@dimen/padding_activity"
         app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="@+id/memo_title_container"
+        app:layout_constraintStart_toStartOf="@+id/memo_title_container"
         app:layout_constraintTop_toBottomOf="@id/memo_title_container">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -38,6 +47,28 @@
             android:hint="@string/memo_text" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/location_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_activity"
+        android:text="@string/select_location"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/memo_description_container"
+        app:layout_constraintStart_toStartOf="@+id/memo_description_container"
+        app:layout_constraintTop_toBottomOf="@+id/memo_description_container" />
+
+    <org.maplibre.android.maps.MapView
+        android:id="@+id/map_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/padding_activity"
+        android:layout_marginBottom="@dimen/padding_activity"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/location_title"
+        app:layout_constraintStart_toStartOf="@+id/location_title"
+        app:layout_constraintTop_toBottomOf="@+id/location_title" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,11 +10,16 @@ import javax.inject.Singleton
 /**
  * Created by M.Çağatay
  * Created on 17.08.2026
+ *
+ * RepositoryModule binds the MemoRepository implementation to the IMemoRepository interface.
  */
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class RepositoryModule {
 
+    /*
+     * Binds the MemoRepository implementation to the IMemoRepository interface.
+     */
     @Binds
     @Singleton
     abstract fun bindMemoRepository(repository: MemoRepository): IMemoRepository
