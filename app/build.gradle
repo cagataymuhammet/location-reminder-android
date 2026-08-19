@@ -4,6 +4,8 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'com.google.devtools.ksp'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -15,17 +17,32 @@ android {
         minSdkVersion 27
         versionCode 1
         versionName "1.0"
+        targetSdk = 36
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
+
+    // Signing credentials are intentionally kept in the project for the scope of this coding case.
+    // In a production environment, these values would be externalized and managed securely
+    // through local properties, environment variables, CI/CD secrets, or a secret management solution.
+    signingConfigs {
+        release {
+            storeFile file("../keystore/keysrore.jks")
+            storePassword "Sap2026."
+            keyAlias "Sap"
+            keyPassword "Sap2026."
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding true
@@ -35,7 +52,7 @@ android {
 kotlin {
     target {
         compilerOptions {
-            jvmTarget = JvmTarget.JVM_21
+            jvmTarget = JvmTarget.JVM_17
         }
     }
 }
@@ -44,6 +61,7 @@ ext {
     kotlinCoroutinesVersion = '1.10.2'
     roomVersion = '2.7.2'
     lifecycleVersion = '2.9.3'
+    daggerHiltVersion = '2.58'
 }
 
 dependencies {
@@ -51,12 +69,15 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.17.0'
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'com.google.android.gms:play-services-location:21.4.0'
     implementation 'com.google.android.material:material:1.12.0'
+    implementation "androidx.activity:activity-ktx:1.13.0"
 
     //Lifecycle, LiveData and ViewModel dependencies
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+
 
     //Room persistence
     implementation "androidx.room:room-runtime:$roomVersion"
@@ -67,7 +88,21 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinCoroutinesVersion"
 
+    //Dagger Hilt
+    implementation "com.google.dagger:hilt-android:$daggerHiltVersion"
+    kapt "com.google.dagger:hilt-compiler:$daggerHiltVersion"
+
+    implementation "org.maplibre.gl:android-sdk:13.5.0"
+    implementation "org.maplibre.gl:android-plugin-annotation:4.0.0"
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+
+    androidTestImplementation 'io.mockk:mockk-android:1.14.11'
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion"
+}
+
+kapt {
+    correctErrorTypes = true
 }

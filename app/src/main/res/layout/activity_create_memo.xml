@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sap.codelab.view.create.CreateMemo">
+    tools:context="com.sap.codelab.ui.create.CreateMemoActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
@@ -20,5 +22,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include android:id="@+id/content_create_memo" layout="@layout/content_create_memo" />
+    <include
+        android:id="@+id/content_memo"
+        layout="@layout/content_memo" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
