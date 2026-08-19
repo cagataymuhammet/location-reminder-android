@@ -17,6 +17,7 @@ import javax.inject.Inject
 internal class ViewMemoViewModel @Inject constructor(private val getMemoByIdUseCase: GetMemoByIdUseCase) :
     ViewModel() {
 
+
     private val _memo: MutableStateFlow<Memo?> = MutableStateFlow(null)
     val memo: StateFlow<Memo?> = _memo
 

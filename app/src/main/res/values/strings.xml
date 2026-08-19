@@ -6,6 +6,14 @@
     <string name="new_memo">New Memo</string>
     <string name="memo_text">Text</string>
     <string name="action_save">Save</string>
+    <string name="select_location">Please select a location from the map</string>
+    <string name="selected_location">Selected location :</string>
+
+    <string name="permission_notification_required">Notification permission is required for active reminders.</string>
+    <string name="permission_location_required">Precise location permission is required for active reminders.</string>
+    <string name="permission_background_location_required">Location reminders need background location access to work when the app is closed. Please select "Allow all the time" in Location permissions.</string>
+    <string name="enable">ENABLE</string>
+
     <string name="memo_title_empty_error">Please provide a title for this memo</string>
     <string name="memo_text_empty_error">Please provide a memo description</string>
 </resources>

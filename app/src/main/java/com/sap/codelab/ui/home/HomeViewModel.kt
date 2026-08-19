@@ -29,6 +29,9 @@ internal class HomeViewModel @Inject constructor(
 
     private val isShowAll = MutableStateFlow(false)
 
+    /*
+    * Exposes the memos flow.
+     */
     val memos: StateFlow<List<Memo>> = isShowAll
         .flatMapLatest { showAll ->
             if (showAll) {
@@ -58,6 +61,7 @@ internal class HomeViewModel @Inject constructor(
      * @param isChecked - whether the memo has been checked (marked as done).
      */
     fun updateMemo(memo: Memo, isChecked: Boolean) {
+        // We'll only forward the update if the memo has been checked, since we don't offer to uncheck memos right now
         if (!isChecked) return
         viewModelScope.launch {
             saveMemoUseCase(
