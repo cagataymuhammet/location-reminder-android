@@ -3,13 +3,14 @@ package com.sap.codelab.ui.detail
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import com.sap.codelab.databinding.ActivityViewMemoBinding
+import androidx.lifecycle.repeatOnLifecycle
 import com.sap.codelab.data.model.Memo
+import com.sap.codelab.databinding.ActivityViewMemoBinding
 import com.sap.codelab.ui.BaseBindingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlin.getValue
 
 internal const val BUNDLE_MEMO_ID: String = "memoId"
 
@@ -31,20 +32,37 @@ internal class ViewMemoActivity : BaseBindingActivity<ActivityViewMemoBinding>()
         setSupportActionBar(binding.toolbar)
         // Initialize views with the passed memo id
 
+        observeMemo()
         if (savedInstanceState == null) {
-            // Observe the memo state flow for changes
-            lifecycleScope.launch {
-                viewMemoViewModel.memo.collect { value ->
-                    value?.let { memo ->
-                        // Update the UI whenever the memo changes
-                        updateUI(memo)
-                    }
-                }
-            }
-            val id = intent.getLongExtra(BUNDLE_MEMO_ID, -1)
-            viewMemoViewModel.loadMemo(id)
+            loadMemo()
         }
     }
+
+    /**
+     * Observes memo changes and updates the UI.
+     */
+    private fun observeMemo() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewMemoViewModel.memo.collect { memo ->
+                    memo?.let(::updateUI)
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Loads the memo using the id passed to this Activity.
+     */
+    private fun loadMemo() {
+        val memoId = intent.getLongExtra(BUNDLE_MEMO_ID, -1L)
+
+        if (memoId != -1L) {
+            viewMemoViewModel.loadMemo(memoId)
+        }
+    }
+
 
     /**
      * Updates the UI with the given memo details.
